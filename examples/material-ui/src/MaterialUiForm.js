@@ -110,75 +110,77 @@ const renderRadioGroup = ({ input, ...rest }) => (
   />
 )
 
+const renderConditionFields = ({ fields, selectedEvent }) => {
+  return (
+    <div>
+      {fields.map((condition, index, { get }) => {
+        const conditionValue = get().get(index) || new Map();
+        const attr = conditionValue.get(FORM_KEY_CONDITION_ATTRIBUTE);
+        const attrFieldOptions = selectedEvent ? attrOptions[selectedEvent] || [] : [];
+        const operationFieldOptions = attr ? operationOptions : [];
+        return (
+          <div key={index}>
+            <div style={{ display: 'flex', flex: '0 0 auto', flexDirection: 'column', background: 'white' }}>
+              <Field
+                name={`${condition}.${FORM_KEY_CONDITION_ATTRIBUTE}`}
+                component={renderSelectField}
+                label="Attribute"
+                disabled={!selectedEvent}
+              >
+                {attrFieldOptions.map((attr, index) => (
+                  <MenuItem key={index} {...attr} />
+                ))}
+              </Field>
+              <Field
+                name={`${condition}.${FORM_KEY_CONDITION_OPERATION}`}
+                component={renderSelectField}
+                label="Operation"
+                disabled={!conditionValue.get(FORM_KEY_CONDITION_ATTRIBUTE)}
+              >
+                {operationFieldOptions.map((op, index) => (
+                  <MenuItem key={index} {...op} />
+                ))}
+              </Field>
+              <Field
+                name={`${condition}.${FORM_KEY_CONDITION_VALUE}`}
+                component={renderTextField}
+                label="Value"
+                disabled={!conditionValue.get(FORM_KEY_CONDITION_OPERATION)}
+              />
+            </div>
+            {(fields.length - 1) !== index ?
+              <div>
+                <Field
+                  name={`${condition}.${FORM_KEY_CONDITION_OPERATOR}`}
+                  component={renderRadioGroup}
+                >
+                  <RadioButton value="OR" label="OR" />
+                  <RadioButton value="AND" label="AND" />
+                </Field>
+              </div>
+            : null}
+            {(fields.length - 1) !== 0 ? <div style={{ display: 'flex', flex: '0 0 auto', flexDirection: 'column' }}>
+              <span
+                style={{ padding: '1em' }}
+                onClick={() => fields.remove(index)}
+              >Remove
+              </span>
+            </div>
+            : null}
+          </div>
+        );
+      })}
+      <div style={{ margin: '1.5em' }}>
+        <span onClick={() => fields.push(new Map({ [FORM_KEY_CONDITION_OPERATOR]: 'AND' }))}>+ New condition</span>
+      </div>
+    </div>
+  );
+};
+
 let MaterialUiForm = props => {
   const { handleSubmit, pristine, submitting, formValues } = props
   console.log('selectedEvent', formValues ? formValues.get(FORM_KEY_EVENT) : undefined);
-  const renderConditionFields = ({ fields, selectedEvent }) => {
-    return (
-      <div>
-        {fields.map((condition, index, { get }) => {
-          const conditionValue = get().get(index) || new Map();
-          const attr = conditionValue.get(FORM_KEY_CONDITION_ATTRIBUTE);
-          const attrFieldOptions = selectedEvent ? attrOptions[selectedEvent] || [] : [];
-          const operationFieldOptions = attr ? operationOptions : [];
-          return (
-            <div key={index}>
-              <div style={{ display: 'flex', flex: '0 0 auto', flexDirection: 'column', background: 'white' }}>
-                <Field
-                  name={`${condition}.${FORM_KEY_CONDITION_ATTRIBUTE}`}
-                  component={renderSelectField}
-                  label="Attribute"
-                  disabled={!selectedEvent}
-                >
-                  {attrFieldOptions.map((attr, index) => (
-                    <MenuItem key={index} {...attr} />
-                  ))}
-                </Field>
-                <Field
-                  name={`${condition}.${FORM_KEY_CONDITION_OPERATION}`}
-                  component={renderSelectField}
-                  label="Operation"
-                  disabled={!conditionValue.get(FORM_KEY_CONDITION_ATTRIBUTE)}
-                >
-                  {operationFieldOptions.map((op, index) => (
-                    <MenuItem key={index} {...op} />
-                  ))}
-                </Field>
-                <Field
-                  name={`${condition}.${FORM_KEY_CONDITION_VALUE}`}
-                  component={renderTextField}
-                  label="Value"
-                  disabled={!conditionValue.get(FORM_KEY_CONDITION_OPERATION)}
-                />
-              </div>
-              {(fields.length - 1) !== index ?
-                <div>
-                  <Field
-                    name={`${condition}.${FORM_KEY_CONDITION_OPERATOR}`}
-                    component={renderRadioGroup}
-                  >
-                    <RadioButton value="OR" label="OR" />
-                    <RadioButton value="AND" label="AND" />
-                  </Field>
-                </div>
-              : null}
-              {(fields.length - 1) !== 0 ? <div style={{ display: 'flex', flex: '0 0 auto', flexDirection: 'column' }}>
-                <span
-                  style={{ padding: '1em' }}
-                  onClick={() => fields.remove(index)}
-                >Remove
-                </span>
-              </div>
-              : null}
-            </div>
-          );
-        })}
-        <div style={{ margin: '1.5em' }}>
-          <span onClick={() => fields.push(new Map({ [FORM_KEY_CONDITION_OPERATOR]: 'AND' }))}>+ New condition</span>
-        </div>
-      </div>
-    );
-  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>

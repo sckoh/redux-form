@@ -2,17 +2,18 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import { Provider } from 'react-redux'
-import { createStore, combineReducers } from 'redux'
-import { reducer as reduxFormReducer } from 'redux-form'
+import { createStore } from 'redux'
+import { combineReducers } from 'redux-immutable'
+import { reducer as reduxFormReducer } from 'redux-form/immutable'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import {
   App,
   Code,
   Markdown,
-  Values,
   generateExampleBreadcrumbs
 } from 'redux-form-website-template'
+import Values from './ImmutableValues'
 injectTapEventPlugin()
 const dest = document.getElementById('content')
 const reducer = combineReducers({

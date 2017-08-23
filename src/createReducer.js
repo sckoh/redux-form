@@ -269,6 +269,13 @@ const createReducer = structure => {
       if (registeredFields) {
         result = setIn(result, 'registeredFields', registeredFields)
       }
+
+      // persist old meta
+      const fields = getIn(state, 'fields')
+      if (keepDirty && fields) {
+        result = setIn(result, 'fields', fields)
+      }
+
       let newValues = mapData
       if (keepDirty && registeredFields) {
         //

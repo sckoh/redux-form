@@ -3,8 +3,11 @@
 .nyc_output
 coverage
 node_modules
-dist
+# dist
+# es
+# lib
 lib/**/__tests__
-es
+es/**/__tests__
+dist/**/__tests__
 npm-debug.log
 .DS_Store
